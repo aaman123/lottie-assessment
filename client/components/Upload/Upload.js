@@ -1,26 +1,49 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import { inputReplacer, lottieChecker } from '../../helpers/GenericHelpers';
+import Login from '../Auth/Login';
+import axios from 'axios';
 
 const Upload = ({isDialogOpened, handleCloseDialog}) => {
-//   const [open, setOpen] = useState(false)
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState({});
+  const [fileData, setFileData] = useState();
+  
   const handleClose = () => {
-    //setOpen(false);
     handleCloseDialog(false);
   };
+
+  useEffect(() => {
+    if(fileData && Object.keys(userData).length !== 0) {
+      var payLoad = new FormData();
+      payLoad.append("userData", userData);
+      payLoad.append("lottieFile", fileData);
+      axios({
+        method: 'POST',
+        url: 'http://localhost:8080/api/postLottieData',
+        data: payLoad,
+        header: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((response) => {
+        console.log(response);
+      })
+    }
+  }, [userData, fileData])
   
   const onFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
     const oldInput = document.getElementById('uploadFile');
     if(uploadedFile.type != 'application/json') {
-      alert('File uploaded in not a json');
+      alert('File uploaded is not a json');
       inputReplacer(oldInput);
     } else {
       await lottieChecker(uploadedFile).then((checkResult) => {
-        if(checkResult == true) {
-          console.log('aman');
+        if(checkResult) {
+          setFileData(uploadedFile)
+          setIsOpen(true);
         } else {
           alert('does not contain');
           inputReplacer(oldInput);
@@ -75,7 +98,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                     </button>
                   </div>
                 </Transition.Child>
-                <div className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
+                <div id="aman" className="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll">
                   <div className="px-4 sm:px-6">
                     <Dialog.Title className="text-lg font-medium text-gray-900">Upload your lottie here !!</Dialog.Title>
                   </div>
@@ -88,13 +111,19 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                                 <h1>Drag/drop your Lottie here or</h1>
                               </div>
                               <div>
-                                <input id="uploadFile" onChange={onFileUpload} class="w-64 border-2 border-black border-yellow-600 font-mono 
-                               font-bold hover:bg-yellow-500 rounded p-2" type="file" placeholder="Browse"/>
+                                <input id="uploadFile" onChange={onFileUpload} 
+                                       class="w-64 border-2 border-black border-yellow-600 font-mono 
+                                              font-bold hover:bg-yellow-500 rounded p-2" 
+                                       type="file" placeholder="Browse"/>
                               </div>
                           </div>
                       </div>
                     </div>
-                    {/* /End replace */}
+                    <Login 
+                      isLoginDialogOpened={isOpen}
+                      handleCloseLoginDialog={() => setIsOpen(false)}
+                      userData={(userD) => setUserData(userD)}
+                    />
                   </div>
                 </div>
               </div>
