@@ -21,7 +21,8 @@ app.use(function (req, res, next) {
 
 const { json, urlencoded } = express;
 app.use(json());
-app.use(urlencoded({ extended: false }));
+app.use(urlencoded({ extended: true }));
+app.use("/api", require('./routes/fetchLottie'));
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "/client/build")));
