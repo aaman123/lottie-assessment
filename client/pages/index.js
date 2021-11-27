@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import Dashboard from './Dashboard/Dashboard';
+import Landing from './Landing/Landing';
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
         <meta name="description" content="Upload and View your lotties" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Dashboard />
+      <Landing />
     </div>
   )
 }

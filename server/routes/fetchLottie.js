@@ -1,10 +1,54 @@
 const router = require('express').Router();
-const multer = require('multer');
-const upload = multer();
+const { User, Animation } = require('../db/models');
+const Op = require('sequelize');
 
-router.post('/postLottieData', upload.single('lottieFile') ,async(req, res) => {
-    console.log(req.file);
-    console.log(req.body)
+router.post('/postLottieData', async(req, res) => {
+    try {
+        const { userData, fileData } = req.body;
+        const email = userData.email;
+        const username = userData.name;
+        const photoUrl = userData.imageUrl;
+        const animationJson = fileData;
+
+        const user = await User.findAll({
+            where: {
+                email :email
+            }
+        })
+
+        if(user.length != 0) {
+            res.sendStatus(501);
+        } else {
+            await User.create({ username, email, photoUrl });
+            await Animation.create({ email , animationJson});
+
+            res.json({ username, photoUrl, animationJson });
+        }
+
+    } catch(err) {
+        console.log(err);
+    }
+})
+
+router.get('/getLotties/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+
+        const user = await User.findAll({
+            where: {
+                email: email
+            }
+        })
+
+        const animation = await Animation.findAll({
+            where: {
+                email: email,
+            }
+        })
+        res.json({user, animation})
+    } catch (err) {
+        console.log(err);
+    }
 })
 
 module.exports = router;

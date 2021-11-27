@@ -26,7 +26,7 @@ const lottieChecker = (jsonFile) => {
                 };
             })
             
-            if(hasProperty) resolve(true);
+            if(hasProperty) resolve([true, file]);
             resolve(false);       
         }
     })

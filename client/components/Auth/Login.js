@@ -63,7 +63,7 @@ const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Please Login so that we can remember you and store your Lottie's safely !!
+                            Please Login so that we can remember you and store your Lotties safely !!
                           </p>
                         </div>
                         <div className="mt-4 mr-10 flex justify-center">

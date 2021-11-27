@@ -1,6 +1,10 @@
 const express = require('express');
 const http = require('http');
 const dotenv = require('dotenv');
+const session = require('express-session');
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const db = require('./db');
+const sessionStore = new SequelizeStore({ db });
 
 dotenv.config();
 const app = express();
@@ -20,7 +24,7 @@ app.use(function (req, res, next) {
 });
 
 const { json, urlencoded } = express;
-app.use(json());
+app.use(json({limit: '50mb'}));
 app.use(urlencoded({ extended: true }));
 app.use("/api", require('./routes/fetchLottie'));
 
@@ -36,10 +40,14 @@ if (process.env.NODE_ENV === "production") {
     });
 }
 
-server.listen(PORT);
-server.on("error", onError);
-server.on("listening", onListening);
-
+sessionStore
+  .sync()
+  .then(() => db.sync())
+  .then(() => {
+    server.listen(PORT);
+    server.on("error", onError);
+    server.on("listening", onListening);
+  });
 
 /**
  * Event listener for HTTP server "listening" event.

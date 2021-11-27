@@ -1,5 +1,6 @@
 import doggo from '../../public/animations/doggo';
 import yoga from '../../public/animations/yoga';
+import banner from '../../public/animations/lottie-banner';
 
 const animationOptionsDoggo = {
     loop: true,
@@ -19,7 +20,17 @@ const animationOptionsYoga = {
     }
 };
 
+const animationOptionsBanner = {
+    loop: false,
+    autoplay: true,
+    animationData: banner,
+    rendererSettings: {
+        preserverAspectRatio: "xMidYMid slice"
+    }    
+}
+
 export {
     animationOptionsDoggo,
-    animationOptionsYoga
+    animationOptionsYoga,
+    animationOptionsBanner
 }

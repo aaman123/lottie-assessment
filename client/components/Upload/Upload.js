@@ -17,15 +17,16 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
 
   useEffect(() => {
     if(fileData && Object.keys(userData).length !== 0) {
-      var payLoad = new FormData();
-      payLoad.append("userData", userData);
-      payLoad.append("lottieFile", fileData);
+      var payLoad = {
+        userData: userData,
+        fileData: fileData
+      }
       axios({
         method: 'POST',
         url: 'http://localhost:8080/api/postLottieData',
         data: payLoad,
         header: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       }).then((response) => {
         console.log(response);
@@ -41,8 +42,8 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       inputReplacer(oldInput);
     } else {
       await lottieChecker(uploadedFile).then((checkResult) => {
-        if(checkResult) {
-          setFileData(uploadedFile)
+        if(checkResult[0]) {
+          setFileData(checkResult[1])
           setIsOpen(true);
         } else {
           alert('does not contain');
@@ -106,13 +107,13 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                     {/* Replace with your content */}
                     <div className="absolute inset-0 px-4 sm:px-6">
                       <div className="h-full border-2 border-dashed border-gray-200" aria-hidden="true">
-                          <div class="flex flex-col items-center mt-45">
-                              <div class="flex">
+                          <div className="flex flex-col items-center mt-45">
+                              <div className="flex">
                                 <h1>Drag/drop your Lottie here or</h1>
                               </div>
                               <div>
                                 <input id="uploadFile" onChange={onFileUpload} 
-                                       class="w-64 border-2 border-black border-yellow-600 font-mono 
+                                       className="w-64 border-2 border-black border-yellow-600 font-mono 
                                               font-bold hover:bg-yellow-500 rounded p-2" 
                                        type="file" placeholder="Browse"/>
                               </div>
