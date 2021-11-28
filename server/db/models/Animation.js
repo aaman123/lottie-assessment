@@ -4,7 +4,7 @@ const db = require("../db");
 const Animation = db.define('animation', {
     email: {
         type: Sequelize.STRING,
-        unique: true,
+        unique: false,
         alloWNull: false,
         validate: {
             isEmail: true

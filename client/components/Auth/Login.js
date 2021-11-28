@@ -16,6 +16,7 @@ const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
       googleUserData['email'] = response.profileObj.email;
       googleUserData['name'] = response.profileObj.name;
       googleUserData['imageUrl'] = response.profileObj.imageUrl;
+      localStorage.setItem('user', response.profileObj.email);
       userData(googleUserData);
       handleClose();
     }
@@ -72,7 +73,8 @@ const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
                               buttonText="Sign In With Google"
                               onSuccess={responseGoogle}
                               onFailure={responseGoogle}
-                              cookiePolicy={'single_host_origin'}
+                              accessType="offline"
+                              prompt="consent"
                             />
                           </div>
                         </div>

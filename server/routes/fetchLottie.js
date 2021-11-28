@@ -5,6 +5,7 @@ const Op = require('sequelize');
 router.post('/postLottieData', async(req, res) => {
     try {
         const { userData, fileData } = req.body;
+        console.log(userData);
         const email = userData.email;
         const username = userData.name;
         const photoUrl = userData.imageUrl;
@@ -17,7 +18,7 @@ router.post('/postLottieData', async(req, res) => {
         })
 
         if(user.length != 0) {
-            res.sendStatus(501);
+            await Animation.create({ email , animationJson});
         } else {
             await User.create({ username, email, photoUrl });
             await Animation.create({ email , animationJson});

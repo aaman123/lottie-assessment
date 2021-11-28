@@ -1,18 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import Upload from '../../components/Upload/Upload';
+import ViewLottie from "../../components/Layout/ViewLottie";
 
-export default function IndexPage() {
+const Dashboard = ({username}) => {
     
     const [show, setShow] = useState(false);
     const [profile, setProfile] = useState(false);
     const [userData, setUserData] = useState({});
     const [animationData, setAnimationData] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [viewLottie, setViewLottie] = useState(false);
+    const [lottieData, setLottieData] = useState();
+
+    const handleOpen = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleLottieOpen = (lottieData) => {
+        setViewLottie(!viewLottie);
+        setLottieData(lottieData);
+    }
 
     useEffect(() => {
         axios({
             type: 'GET',
-            url: 'http://localhost:8080/api/getLotties/sutariyaaman1998@gmail.com',
+            url: `http://localhost:8080/api/getLotties/${username}`,
             header: {
                 'Content-Type': 'application/json'
             }
@@ -55,7 +69,8 @@ export default function IndexPage() {
                                 <div className="flex items-center">
                                     <div className="w-6 h-6 md:w-8 md:h-8">
                                         <button className="w-44 border-2 border-black border-yellow-600 font-mono 
-                                                           font-bold hover:bg-yellow-500 rounded p-2">
+                                                           font-bold hover:bg-yellow-500 rounded p-2"
+                                                onClick={() => handleOpen()} >
                                             Upload Animation
                                         </button>
                                     </div>
@@ -147,7 +162,7 @@ export default function IndexPage() {
                         {/* Navigation starts */}
                         <nav className="h-16 flex items-center lg:items-stretch 
                                         justify-end lg:justify-between bg-white 
-                                        relative z-10">
+                                        relative z-40">
                             <div className="hidden lg:flex w-full pr-6">
                                 <div className="w-1/2 h-full hidden lg:flex items-center pl-6 pr-24">
                                     <div className="relative w-full">
@@ -252,24 +267,33 @@ export default function IndexPage() {
                         </nav>
 
                         <div className="container h-64 md:w-4/5 w-11/12 px-6 mt-10 ml-5">
-                            <div className="w-full h-full rounded ">
+                            <div className="w-full h-full rounded flex flex-col flex-wrap">
                                 {
-                                    animationData.map((lottie) => {
+                                    animationData.map((lottie, index) => {
                                         return(    
-                                            <div className="w-80 border-2 rounded-xl shadow-2xl">
+                                            <div key={index} className="w-80 border-2 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
                                                 <Player
                                                     autoplay
                                                     loop
                                                     src={lottie.animationJson}
                                                     style={{ height: '300px', width: '300px' }}
                                                     >
-                                                    <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
+                                                    <Controls visible={false} buttons={['play', 'repeat', 'frame', 'debug']} />
                                                 </Player>
-                                            </div>
+                                            </div>                      
                                         )
                                     })
                                 }
                             </div>
+                            <Upload  
+                                isDialogOpened={isOpen}
+                                handleCloseDialog={() => setIsOpen(false)}
+                            />
+                            <ViewLottie
+                                isLottieDialogOpened={viewLottie}
+                                handleCloseLottieDialog={() => setViewLottie(false)}
+                                lottieData={lottieData}
+                            />
                         </div>
                     </div>
                 </div>
@@ -277,3 +301,5 @@ export default function IndexPage() {
         </>
     );
 }
+
+export default Dashboard;

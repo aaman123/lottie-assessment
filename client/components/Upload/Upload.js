@@ -10,6 +10,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState({});
   const [fileData, setFileData] = useState();
+  const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
   
   const handleClose = () => {
     handleCloseDialog(false);
@@ -19,6 +20,23 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
     if(fileData && Object.keys(userData).length !== 0) {
       var payLoad = {
         userData: userData,
+        fileData: fileData
+      }
+      axios({
+        method: 'POST',
+        url: 'http://localhost:8080/api/postLottieData',
+        data: payLoad,
+        header: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        console.log(response);
+      })
+    } else {
+      var payLoad = {
+        userData: {
+          email: user
+        },
         fileData: fileData
       }
       axios({
@@ -44,7 +62,9 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       await lottieChecker(uploadedFile).then((checkResult) => {
         if(checkResult[0]) {
           setFileData(checkResult[1])
-          setIsOpen(true);
+          if(user == null) {
+            setIsOpen(true);
+          }
         } else {
           alert('does not contain');
           inputReplacer(oldInput);
