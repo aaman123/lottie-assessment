@@ -27,7 +27,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       }
       axios({
         method: 'POST',
-        url: 'http://localhost:8080/api/postLottieData',
+        url: 'http://65.1.64.218/api/postLottieData',
         data: payLoad,
         header: {
           'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       }
       axios({
         method: 'POST',
-        url: 'http://localhost:8080/api/postLottieData',
+        url: 'http://65.1.64.218/api/postLottieData',
         data: payLoad,
         header: {
           'Content-Type': 'application/json'

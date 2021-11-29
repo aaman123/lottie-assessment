@@ -26,7 +26,7 @@ const Dashboard = ({username}) => {
     useEffect(() => {
         axios({
             type: 'GET',
-            url: `http://localhost:8080/api/getLotties/${username}`,
+            url: `http://65.1.64.218/api/getLotties/${username}`,
             header: {
                 'Content-Type': 'application/json'
             }
@@ -41,7 +41,7 @@ const Dashboard = ({username}) => {
             const searchTerm = event.target.value;
             axios({
                 type: 'GET',
-                url: `http://localhost:8080/api/searchLottie/${username}/${searchTerm}`,
+                url: `http://65.1.64.218/api/searchLottie/${username}/${searchTerm}`,
                 header: {
                     'Content-Type': 'application/json'
                 }
