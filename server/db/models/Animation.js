@@ -13,6 +13,10 @@ const Animation = db.define('animation', {
     animationJson: {
         type: Sequelize.JSON(65536),
         allowNull: false
+    },
+    tags: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: true
     }
 })
 

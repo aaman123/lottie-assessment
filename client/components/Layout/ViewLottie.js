@@ -1,18 +1,20 @@
 import { Fragment, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { LoginIcon } from '@heroicons/react/outline';
-import { Player, Controls } from '@lottiefiles/react-lottie-player';
-import { SketchPicker } from 'react-color'
+import { SketchPicker } from 'react-color';
+import LottiePlayer from '../Animations/LottiePlayer';
+import LottieEditor from '../../pages/Editor/LottieEditor';
 
 
 const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData}) => {
     const cancelButtonRef = useRef(null)
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [color, setColor] = useState();
+    const [editLottie, setEditLottie] = useState(false);
 
     const handleClose = () => {
         handleCloseLottieDialog(false);
-        // setColor('#fffff')
+        setColor('#fffff')
     };
 
     const handleClick = () => {
@@ -26,12 +28,11 @@ const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData})
     const handleChange = (color) => {
         setColor(color.hex)
     };
-    console.log(lottieData);
-    const onLayerSelect = (event) => {
-        event.preventDefault();
 
-        console.log(event.target.value);
+    const handleEditLottie = () => {
+      setEditLottie(!editLottie)
     }
+
     return (
         <Transition.Root show={isLottieDialogOpened} as={Fragment}>
           <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" initialFocus={cancelButtonRef} onClose={handleClose}>
@@ -74,20 +75,12 @@ const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData})
                           Edit Your Lottie
                         </Dialog.Title>
                         <div className="mt-10">
-                        <Player
-                            autoplay
-                            loop
-                            src={lottieData}
-                            style={{ height: '300px', width: '300px' }}
-                            background={color}
-                            >
-                            <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-                        </Player>  
+                          <LottiePlayer color={color} lottieData={lottieData} />
                         </div>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gray-50 flex flex-col justify-center mb-20">
+                    <div className="bg-gray-50 flex flex-col justify-center mt-5 mb-10">
                         <div className="flex justify-center">
                             <p className="mr-4 font-mono font-black">Change Background Color: </p>
                             <div className="swatch"  onClick={handleClick}>
@@ -102,22 +95,12 @@ const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData})
                                 null 
                             }
                         </div>
-                        <div className="flex justify-center">
-                            <p>Your lottie layers</p>
-                            <select onChange={onLayerSelect}>
-                                {
-                                    lottieData != undefined ?  
-                                    lottieData.layers.map((name, i) => {        
-                                        console.log(name.nm);
-                                        return(
-                                            <option key={i}>{name.nm}</option>   
-                                        )         
-                                    })
-                                    :
-                                    null                               
-                                }
-                            </select>
-                        </div>
+                  </div>
+                  <div className="flex justify-center mb-10">                            
+                    <button onClick={handleEditLottie} className="w-60 border-2 border-black border-yellow-600 font-mono 
+                                        font-bold hover:bg-yellow-500 rounded p-2">
+                      Edit Your Lottie !
+                    </button>
                   </div>
                 </div>
               </Transition.Child>

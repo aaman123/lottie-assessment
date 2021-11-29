@@ -1,15 +1,16 @@
 const router = require('express').Router();
 const { User, Animation } = require('../db/models');
-const Op = require('sequelize');
+const { Op } = require('sequelize');
+const {response} = require('express');
 
 router.post('/postLottieData', async(req, res) => {
     try {
-        const { userData, fileData } = req.body;
-        console.log(userData);
+        const { userData, fileData, tagsData } = req.body;
         const email = userData.email;
         const username = userData.name;
         const photoUrl = userData.imageUrl;
         const animationJson = fileData;
+        const tags = tagsData;
 
         const user = await User.findAll({
             where: {
@@ -18,10 +19,10 @@ router.post('/postLottieData', async(req, res) => {
         })
 
         if(user.length != 0) {
-            await Animation.create({ email , animationJson});
+            await Animation.create({ email , animationJson, tags });
         } else {
             await User.create({ username, email, photoUrl });
-            await Animation.create({ email , animationJson});
+            await Animation.create({ email , animationJson, tags });
 
             res.json({ username, photoUrl, animationJson });
         }
@@ -47,6 +48,26 @@ router.get('/getLotties/:email', async (req, res) => {
             }
         })
         res.json({user, animation})
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+router.get('/searchLottie/:email/:searchTerm', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const searchTerm = req.params.searchTerm;
+
+        const animation = await Animation.findAll({
+            where: {
+                email: email ,
+                tags: {
+                    [Op.contains]: [searchTerm]
+                }
+            },
+        })
+
+        res.json({animation});
     } catch (err) {
         console.log(err);
     }

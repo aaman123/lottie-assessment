@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/outline';
+import { XIcon, XCircleIcon } from '@heroicons/react/outline';
 import { inputReplacer, lottieChecker } from '../../helpers/GenericHelpers';
 import Login from '../Auth/Login';
 import axios from 'axios';
@@ -11,16 +11,19 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
   const [userData, setUserData] = useState({});
   const [fileData, setFileData] = useState();
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+  const [tags, setTags] = useState([]);
+  const [areTagsUploaded, setAreTagsUploaded] = useState(false);
   
   const handleClose = () => {
     handleCloseDialog(false);
   };
 
   useEffect(() => {
-    if(fileData && Object.keys(userData).length !== 0) {
+    if(fileData && Object.keys(userData).length !== 0 && areTagsUploaded) {
       var payLoad = {
         userData: userData,
-        fileData: fileData
+        fileData: fileData,
+        tagsData: tags
       }
       axios({
         method: 'POST',
@@ -32,12 +35,13 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       }).then((response) => {
         console.log(response);
       })
-    } else {
+    } else if(fileData && areTagsUploaded) {
       var payLoad = {
         userData: {
           email: user
         },
-        fileData: fileData
+        fileData: fileData,
+        tagsData: tags
       }
       axios({
         method: 'POST',
@@ -50,7 +54,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
         console.log(response);
       })
     }
-  }, [userData, fileData])
+  }, [userData, fileData, areTagsUploaded])
   
   const onFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
@@ -71,6 +75,20 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
         }
       })
     }
+  }
+
+  const uploadTag = (event) => {
+    if(event.key === 'Enter') {
+      setTags(tags => [...tags, event.target.value]);
+      event.target.value = "";
+    }
+  }
+
+  const removeTag = (index) => {
+    setTags([
+      ...tags.slice(0, index),
+      ...tags.slice(index+1)
+    ])
   }
 
   return (
@@ -127,7 +145,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                     {/* Replace with your content */}
                     <div className="absolute inset-0 px-4 sm:px-6">
                       <div className="h-full border-2 border-dashed border-gray-200" aria-hidden="true">
-                          <div className="flex flex-col items-center mt-45">
+                          <div className="flex flex-col items-center mt-20">
                               <div className="flex">
                                 <h1>Drag/drop your Lottie here or</h1>
                               </div>
@@ -137,6 +155,31 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                                               font-bold hover:bg-yellow-500 rounded p-2" 
                                        type="file" placeholder="Browse"/>
                               </div>
+                          </div>
+                          <div className="flex flex-col justify-center mt-10">
+                              <div className="flex flex-col ml-12 justify-center">
+                                <input className="border-2 shadow-2xl rounded-xl w-4/5 p-3" onKeyDown={uploadTag} placeholder="Upload tags" />
+                                <div className="flex flex-row mt-10  flex-wrap">
+                                {
+                                  tags.map((tag, index) => {
+                                    return(
+                                      <>
+                                          <p className="flex flex-row m-2 rounded-xl shadow-xl border-2 p-2">{tag}
+                                            <span><XCircleIcon onClick={() => {removeTag(index)}} className="h-4 w-4 mt-1 ml-2" aria-hidden="true" /></span>
+                                          </p>     
+                                      </>
+                                    )
+                                  })
+                                }
+                                  </div>
+                              </div>
+                              
+                              <div className="flex flex-row justify-center mt-10">
+                                <button className="w-64 border-2 border-black border-yellow-600 font-mono 
+                                                  font-bold hover:bg-yellow-500 rounded p-2" 
+                                        onClick={() => {setAreTagsUploaded(!areTagsUploaded)}}>Submit</button>
+                              </div>
+                              
                           </div>
                       </div>
                     </div>

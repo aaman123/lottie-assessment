@@ -36,6 +36,22 @@ const Dashboard = ({username}) => {
         })
     }, [])
 
+    const searchLotties = (event) => {
+        if(event.key == 'Enter') {
+            const searchTerm = event.target.value;
+            axios({
+                type: 'GET',
+                url: `http://localhost:8080/api/searchLottie/${username}/${searchTerm}`,
+                header: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((r) => {
+                setAnimationData(r.data.animation)
+                event.target.value = "";
+            })
+        } 
+    }
+
     return (
         <>
             <div className="w-full h-full bg-gray-200">
@@ -180,7 +196,8 @@ const Dashboard = ({username}) => {
                                                          focus:border-indigo-700 rounded w-full text-sm 
                                                          text-gray-500 bg-gray-100 pl-12 py-2" 
                                                 type="text" 
-                                                placeholder="Search Animations" 
+                                                placeholder="Search Animations"
+                                                onKeyDown={searchLotties}
                                         />
                                     </div>
                                 </div>
@@ -266,12 +283,12 @@ const Dashboard = ({username}) => {
                             </div>
                         </nav>
 
-                        <div className="container h-64 md:w-4/5 w-11/12 px-6 mt-10 ml-5">
-                            <div className="w-full h-full rounded flex flex-col flex-wrap">
+                        <div className="container w-full h-64 md:w-full w-11/12 px-6 mt-10 ml-5">
+                            <div className="w-full h-full rounded flex flex-row flex-wrap">
                                 {
                                     animationData.map((lottie, index) => {
                                         return(    
-                                            <div key={index} className="w-80 border-2 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
+                                            <div key={index} className="w-80 border-2 ml-5 mt-5 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
                                                 <Player
                                                     autoplay
                                                     loop
