@@ -33,7 +33,7 @@ const Dashboard = () => {
     useEffect(() => {
         axios({
             type: 'GET',
-            url: `http://localhost:8080/api/getLotties/${user}`,
+            url: `https://www.amansutariya.codes/api/getLotties/${user}`,
             header: {
                 'Content-Type': 'application/json'
             }
@@ -48,7 +48,7 @@ const Dashboard = () => {
             const searchTerm = event.target.value;
             axios({
                 type: 'GET',
-                url: `http://localhost:8080/api/searchLottie/${user}/${searchTerm}`,
+                url: `https://www.amansutariya.codes/api/searchLottie/${user}/${searchTerm}`,
                 header: {
                     'Content-Type': 'application/json'
                 }

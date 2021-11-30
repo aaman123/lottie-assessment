@@ -12,6 +12,7 @@ const LottieEditor = () => {
     const ref = useRef(null);
     const { lottieData } = useLottieData();
     const router = useRouter();
+    const jsonDetails = {};
 
     React.useEffect(() => {
       import("@lottiefiles/lottie-player");
@@ -21,17 +22,19 @@ const LottieEditor = () => {
     // const [displayColorPicker, setDisplayColorPicker] = useState(false);
     // const [color, setColor] = useState();
 
-    const jsonDetails = {
-        "v": lottieData.v,
-        "fr": lottieData.fr,
-        "ip": lottieData.ip,
-        "op": lottieData.op,
-        "w": lottieData.w,
-        "h": lottieData.h,
-        "nm": lottieData.nm,
-        "ddd": lottieData.ddd,
-        "assets": [],
-        "layers": []
+    if(lottieData != null || undefined) {
+        jsonDetails = {
+            "v": lottieData.v,
+            "fr": lottieData.fr,
+            "ip": lottieData.ip,
+            "op": lottieData.op,
+            "w": lottieData.w,
+            "h": lottieData.h,
+            "nm": lottieData.nm,
+            "ddd": lottieData.ddd,
+            "assets": [],
+            "layers": []
+        }       
     }
 
     const handleColors = (layer) => {
@@ -89,31 +92,33 @@ const LottieEditor = () => {
                             <label className="block uppercase tracking-wide text-white text-xs opacity-50 font-lf-bold mb-2 px-4">Layers</label>
                             <div className="relative">
                                 {
-                                    lottieData.layers.map((l, index) => {
-                                        jsonDetails['layers'].pop();
-                                        jsonDetails['layers'].push(l);
-                                        return(
-                                            <div key={uuid()} onClick={() => {handleColors(lottieData['layers'][index])}}>
-                                                <div className="p-2 pl-4 mt-4 cursor-pointer items-center hover:bg-green-600 flex flex-row">
-                                                    <div className="w-12 h-12 rounded" style={{backgroundColor: 'rgb(255, 255, 255)'}}>
-                                                        <div>
-                                                        <lottie-player
-                                                            id="firstLottie"
-                                                            ref={ref}
-                                                            className="w-full h-12"
-                                                            autoplay
-                                                            loop
-                                                            mode="normal"
-                                                            src={JSON.stringify(jsonDetails)}
-                                                            style={{ overflow: 'hidden' ,margin: '0px auto', width: '50px', height: '50px' }}
-                                                        ></lottie-player>
+                                    lottieData != null || undefined ?
+                                        lottieData.layers.map((l, index) => {
+                                            jsonDetails['layers'].pop();
+                                            jsonDetails['layers'].push(l);
+                                            return(
+                                                <div key={uuid()} onClick={() => {handleColors(lottieData['layers'][index])}}>
+                                                    <div className="p-2 pl-4 mt-4 cursor-pointer items-center hover:bg-green-600 flex flex-row">
+                                                        <div className="w-12 h-12 rounded" style={{backgroundColor: 'rgb(255, 255, 255)'}}>
+                                                            <div>
+                                                            <lottie-player
+                                                                id="firstLottie"
+                                                                ref={ref}
+                                                                className="w-full h-12"
+                                                                autoplay
+                                                                loop
+                                                                mode="normal"
+                                                                src={JSON.stringify(jsonDetails)}
+                                                                style={{ overflow: 'hidden' ,margin: '0px auto', width: '50px', height: '50px' }}
+                                                            ></lottie-player>
+                                                            </div>
                                                         </div>
+                                                        <span className="text-sm text-white pl-3">{l.nm}</span>
                                                     </div>
-                                                    <span className="text-sm text-white pl-3">{l.nm}</span>
                                                 </div>
-                                            </div>
-                                        )
-                                    })
+                                            )
+                                        })
+                                    : null     
                                 }
                             </div>
                         </div>
