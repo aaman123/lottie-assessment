@@ -1,6 +1,12 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
+/*
+    Description: Model for Animation table
+    Dependencies: Sequelize
+    Priority: High
+*/
+
 const Animation = db.define('animation', {
     email: {
         type: Sequelize.STRING,

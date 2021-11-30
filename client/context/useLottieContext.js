@@ -1,5 +1,9 @@
 import { useState, useContext, createContext } from 'react';
 
+/*
+    Description: App-wide context for accessing currently edited Lottie File.
+*/
+
 export const LottieData = createContext();
 
 export const LottieDataProvider = ({ children }) => {

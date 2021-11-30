@@ -1,32 +1,21 @@
-import { GoogleLogin } from 'react-google-login';
 import { Fragment, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { LoginIcon } from '@heroicons/react/outline'
+import { XCircleIcon } from '@heroicons/react/outline'
 
 /*
-  Description: Component for Google Login.
-  Dependencies: Requires google OAuth and uses react-google-login libraries.
+  Description: Component for various confirmation and error popups, it's dynamic !!!
+  Dependencies: None
 */
 
-const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
+const PopUp = ({isPopUpOpened, handleClosePopUp, popUpData}) => {
     const cancelButtonRef = useRef(null)
     
     const handleClose = () => {
-        handleCloseLoginDialog(false);
+        handleClosePopUp(false);
       };
-
-    const responseGoogle = (response) => {
-      const googleUserData = {};
-      googleUserData['email'] = response.profileObj.email;
-      googleUserData['name'] = response.profileObj.name;
-      googleUserData['imageUrl'] = response.profileObj.imageUrl;
-      localStorage.setItem('user', response.profileObj.email);
-      userData(googleUserData);
-      handleClose();
-    }
       
     return (
-        <Transition.Root show={isLoginDialogOpened} as={Fragment}>
+        <Transition.Root show={isPopUpOpened} as={Fragment}>
           <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" initialFocus={cancelButtonRef} onClose={handleClose}>
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <Transition.Child
@@ -60,27 +49,17 @@ const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
                     <div className="sm:flex sm:items-start">
                       <div className="mx-auto flex-shrink-0 flex items-center justify-center 
                                       h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <LoginIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                        <XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                       </div>
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
-                          Login
+                          Sorry
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Please Login so that we can remember you and store your Lotties safely !!
+                            {popUpData}
                           </p>
                         </div>
-                        <div className="mt-4 mr-10 flex justify-center">
-                            <GoogleLogin
-                              clientId="602285906781-g20jthikdoci64ge4cblt132mc2tmhls.apps.googleusercontent.com"
-                              buttonText="Sign In With Google"
-                              onSuccess={responseGoogle}
-                              onFailure={responseGoogle}
-                              accessType="offline"
-                              prompt="consent"
-                            />
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -105,4 +84,4 @@ const Login = ({isLoginDialogOpened, handleCloseLoginDialog, userData}) => {
       )    
 }
 
-export default Login;
+export default PopUp;

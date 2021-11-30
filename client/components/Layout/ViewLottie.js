@@ -6,6 +6,11 @@ import LottiePlayer from '../Animations/LottiePlayer';
 import { useLottieData } from '../../context/useLottieContext';
 import { useRouter } from 'next/router';
 
+/*
+  Description: Component for viewing uploaded lottie Animation and change background color
+  Dependencies: Requires Lottie Player for viewing Lotties.
+*/
+
 const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData}) => {
     const cancelButtonRef = useRef(null)
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
@@ -32,7 +37,7 @@ const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData})
 
     const handleEditLottie = () => {
       setLottieData(lottieData);
-      router.push('/editor');
+      router.push('/lottie-editor');
     }
 
     return (

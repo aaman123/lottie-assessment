@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
 import Upload from '../../components/Upload/Upload';
 import ViewLottie from "../../components/Layout/ViewLottie";
 import uuid from 'react-uuid';
 import { XCircleIcon } from '@heroicons/react/outline';
+import { callGetLottieApi, callSearchLottieApi } from '../../helpers/ApiHelpers';
+
+/*
+    Description: Listing page for all the lottie's
+    Dependencies: React-Lottie-player and Next Hooks.
+    Priority: High
+*/
 
 const Dashboard = () => {
     
@@ -31,13 +37,7 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        axios({
-            type: 'GET',
-            url: `https://www.amansutariya.codes/api/getLotties/${user}`,
-            header: {
-                'Content-Type': 'application/json'
-            }
-        }).then((r) => {
+        callGetLottieApi(user).then((r) => {
             setUserData(r.data.user[0]);
             setAnimationData(r.data.animation);
         })
@@ -46,13 +46,7 @@ const Dashboard = () => {
     const searchLotties = (event) => {
         if(event.key == 'Enter') {
             const searchTerm = event.target.value;
-            axios({
-                type: 'GET',
-                url: `https://www.amansutariya.codes/api/searchLottie/${user}/${searchTerm}`,
-                header: {
-                    'Content-Type': 'application/json'
-                }
-            }).then((r) => {
+            callSearchLottieApi(user, searchTerm).then((r) => {
                 setAnimationData(r.data.animation)
                 event.target.value = "";
             })
@@ -165,7 +159,7 @@ const Dashboard = () => {
                                                 </svg>
                                             </div>
                                             <input className="bg-gray-200 focus:outline-none rounded 
-                                            w-full text-sm text-gray-500  pl-10 py-2" type="text" placeholder="Search for animations" />
+                                            w-full text-sm text-gray-500  pl-10 py-2" type="text" placeholder="Search Animations" />
                                         </div>
                                     </div>
                                     <div className="border-t border-gray-300">
@@ -174,7 +168,7 @@ const Dashboard = () => {
                                                 <img alt="profile-pic" src="" 
                                                 className="w-8 h-8 rounded-md" />
                                                 <p className="md:text-xl text-gray-800 text-base leading-4 ml-2">
-                                                    Jane Doe
+                                                    {userData.username}
                                                 </p>
                                             </div>
                                         </div>
@@ -227,22 +221,6 @@ const Dashboard = () => {
                                                     <ul className="p-2 w-full border-r bg-white 
                                                                    absolute rounded left-0 shadow 
                                                                    mt-12 sm:mt-16 ">
-                                                        <li className="flex w-full justify-between 
-                                                                       text-gray-600 hover:text-indigo-700 
-                                                                       cursor-pointer items-center">
-                                                            <div className="flex items-center">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" 
-                                                                     className="icon icon-tabler icon-tabler-user" width={18} 
-                                                                     height={18} viewBox="0 0 24 24" strokeWidth="1.5" 
-                                                                     stroke="currentColor" fill="none" strokeLinecap="round" 
-                                                                     strokeLinejoin="round">
-                                                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                                                    <circle cx={12} cy={7} r={4} />
-                                                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                                                </svg>
-                                                                <span className="text-sm ml-2">My Profile</span>
-                                                            </div>
-                                                        </li>
                                                         <li className="flex w-full justify-between text-gray-600 
                                                                        hover:text-indigo-700 cursor-pointer items-center mt-2">
                                                             <div className="flex items-center">
@@ -300,12 +278,13 @@ const Dashboard = () => {
                             </div>
                         </nav>
 
-                        <div className="container w-full h-64 md:w-full w-11/12 px-6 mt-10 ml-5">
+                        <div className="container w-full h-screen md:w-full w-11/12 px-6 pt-10 pb-20 ml-5 overflow-y-scroll">
                             <div className="w-full h-full rounded flex flex-row flex-wrap">
-                                {
-                                    animationData.map((lottie, index) => {
+                                {   
+                                    animationData.length != 0 ?
+                                    animationData.map((lottie) => {
                                         return(    
-                                            <div key={uuid()} className="w-80 border-2 ml-5 mt-5 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
+                                            <div key={uuid()} className="w-80 h-2/4 border-2 ml-5 mt-5 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
                                                 <Player
                                                     autoplay
                                                     loop
@@ -316,7 +295,11 @@ const Dashboard = () => {
                                                 </Player>
                                             </div>                      
                                         )
-                                    })
+                                    }) : 
+                                    <> 
+                                    <div className="flex justify-center w-full h-full mt-20"> 
+                                        <h1 className="font-mono text-2xl">Sorry, No Animations Found !!</h1> 
+                                    </div> </>
                                 }
                             </div>
                             <Upload  

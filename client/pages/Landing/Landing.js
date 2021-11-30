@@ -3,7 +3,12 @@ import Lottie from 'react-lottie';
 import { animationOptionsDoggo, animationOptionsYoga } from '../../components/Animations/Animation';
 import Upload from '../../components/Upload/Upload';    
 import Navbar from '../../components/Layout/Navbar';
-import { GoogleLogout } from 'react-google-login';
+
+/*
+    Description: Landing page
+    Dependencies: None
+    Priority: High
+*/
 
 const Landing = () => {
 

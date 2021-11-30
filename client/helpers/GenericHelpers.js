@@ -1,3 +1,7 @@
+/*
+    Description: General Helpers for replacing input and checking lottie.
+*/
+
 const inputReplacer = (oldInput) => {
     var oldInput = document.getElementById("uploadFile");
     var newInput = document.createElement("input");

@@ -1,8 +1,13 @@
 const router = require('express').Router();
 const { User, Animation } = require('../db/models');
 const { Op } = require('sequelize');
-const {response} = require('express');
 
+
+/*
+    Description: Route for posting Lottie Data
+    Dependencies: Sequelize
+    Priority: High
+*/
 router.post('/postLottieData', async(req, res) => {
     try {
         const { userData, fileData, tagsData } = req.body;
@@ -34,6 +39,11 @@ router.post('/postLottieData', async(req, res) => {
     }
 })
 
+/*
+    Description: Route for fetching Lottie Data for a user
+    Dependencies: Sequelize
+    Priority: High
+*/
 router.get('/getLotties/:email', async (req, res) => {
     try {
         const email = req.params.email;
@@ -55,6 +65,11 @@ router.get('/getLotties/:email', async (req, res) => {
     }
 })
 
+/*
+    Description: Route for searching Lottie Data for a user
+    Dependencies: Sequelize
+    Priority: High
+*/
 router.get('/searchLottie/:email/:searchTerm', async (req, res) => {
     try {
         const email = req.params.email;

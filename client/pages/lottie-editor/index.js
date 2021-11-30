@@ -1,12 +1,15 @@
-import styles from './LottieEditor.module.css'
-import LottiePlayer from '../../components/Animations/LottiePlayer';
 import { ArrowCircleLeftIcon }from '@heroicons/react/outline';
 import React, { useRef, useState } from "react";
 import { useRouter } from 'next/router';
-import { SketchPicker } from 'react-color';
 import rgbHex from 'rgb-hex';
 import uuid from 'react-uuid';
 import { useLottieData } from '../../context/useLottieContext';
+
+/*
+    Description: Editing page for a Lottie
+    Dependencies: Use context for fetching lottie to be edited
+    Priority: High
+*/
 
 const LottieEditor = () => {
     const ref = useRef(null);
@@ -19,8 +22,6 @@ const LottieEditor = () => {
     });
     const [hexColors, setHexColors] = useState([]);
     const [layerDetails, setLayerDetails] = useState({});
-    // const [displayColorPicker, setDisplayColorPicker] = useState(false);
-    // const [color, setColor] = useState();
 
     if(lottieData != null || undefined) {
         jsonDetails = {
@@ -62,23 +63,8 @@ const LottieEditor = () => {
         setLayerDetails(details);
     }
 
-    // const handleClick = () => {
-    //     setDisplayColorPicker(!displayColorPicker);
-    // }
-
-    // const handlePickerClose = () => {
-    //     setDisplayColorPicker(false)
-    //   };
-    
-    // const handleChange = (color) => {
-    //     setColor(color.hex)
-    // };
-
-
-    // console.log(layerDetails);
-    // console.log(lottieData.layers[4].shapes[0].it[0].ty);
     return(
-        <div className="relative bg-gray-900">
+        <div className="relative bg-gray-900 overflow-y-hidden">
             <div className="w-full bg-gray-600 h-12 p-2 flex flex-row items-center fixed z-20">
                 <span><ArrowCircleLeftIcon onClick={() => { router.push('/dashboard') }} 
                       className="h-6 w-6 text-white hover:text-green-600" aria-hidden="true" />
@@ -87,7 +73,7 @@ const LottieEditor = () => {
             </div>
             <div>
                 <div className="md:flex relative">
-                    <div className="bg-lf-grey-dark w-1/5 h-screen overflow-y-scroll pt-12 max mt-10">
+                    <div className="bg-lf-grey-dark w-1/4 h-screen overflow-y-scroll pt-20 max">
                         <div className="form-item flex flex-col">
                             <label className="block uppercase tracking-wide text-white text-xs opacity-50 font-lf-bold mb-2 px-4">Layers</label>
                             <div className="relative">
@@ -144,7 +130,7 @@ const LottieEditor = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-lf-grey-dark w-70 h-screen overflow-y-scroll pt-12 flex flex-col max">
+                    <div className="bg-lf-grey-dark w-1/4 h-screen overflow-y-scroll pt-12 flex flex-col max">
                         <div className="p-4">
                             <div className="form-item flex flex-col">
                                 <label className="block mt-4 uppercase tracking-wide text-white text-xs font-lf-bold opacity-50 mb-2">Colors</label>
@@ -159,14 +145,6 @@ const LottieEditor = () => {
                                                     <p className="w-full cursor-pointer p-2" style={{color: "white"}}>#{hexC}</p>
                                                 </div>
                                             </div>
-                                            {/* { displayColorPicker ? 
-                                            <div className="popover">
-                                                <div className="cover " onClick={handlePickerClose}/>
-                                                <SketchPicker color={color} onChange={handleChange} />
-                                            </div> 
-                                            : 
-                                            null 
-                                        } */}
                                         </div>
                                         )
                                     })

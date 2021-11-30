@@ -3,13 +3,23 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XIcon, XCircleIcon } from '@heroicons/react/outline';
 import { inputReplacer, lottieChecker } from '../../helpers/GenericHelpers';
 import Login from '../Auth/Login';
-import axios from 'axios';
+import PopUp from '../PopUps/PopUp';
 import { useRouter } from 'next/router';
 import uuid from 'react-uuid';
+import { callPostLottieApi } from '../../helpers/ApiHelpers';
+
+/*
+  Description: Component for uploading lotties to the database, this component
+               also validates lottie for correct format.
+  Depndenciess: None other NextJs hooks.
+  Priority: High
+*/
 
 const Upload = ({isDialogOpened, handleCloseDialog}) => {
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+  const [popUpData, setPopUpData] = useState("");
   const [userData, setUserData] = useState({});
   const [fileData, setFileData] = useState();
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
@@ -28,16 +38,9 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
         fileData: fileData,
         tagsData: tags
       }
-      axios({
-        method: 'POST',
-        url: 'https://www.amansutariya.codes/api/postLottieData',
-        data: payLoad,
-        header: {
-          'Content-Type': 'application/json'
-        }
-      }).then((response) => {
+      callPostLottieApi(payLoad).then(() => {
         handleClose();
-        router.push('/dashboard');
+        router.push({ pathname: '/dashboard', query: 'lottieUploaded'});
       })
     } else if(fileData && isLottieSubmitted) {
       var payLoad = {
@@ -47,14 +50,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
         fileData: fileData,
         tagsData: tags
       }
-      axios({
-        method: 'POST',
-        url: 'https://www.amansutariya.codes/api/postLottieData',
-        data: payLoad,
-        header: {
-          'Content-Type': 'application/json'
-        }
-      }).then((response) => {
+      callPostLottieApi(payLoad).then(() => {
         handleClose();
         router.push({ pathname: '/dashboard', query: 'lottieUploaded'});
       })
@@ -65,8 +61,9 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
     const uploadedFile = event.target.files[0];
     const oldInput = document.getElementById('uploadFile');
     if(uploadedFile.type != 'application/json') {
-      alert('File uploaded is not a json');
-      inputReplacer(oldInput);
+      setPopUpData('File Uploaded is not a JSON');
+      setIsPopUpOpen(true);
+      handleClose();
     } else {
       await lottieChecker(uploadedFile).then((checkResult) => {
         if(checkResult[0]) {
@@ -75,8 +72,10 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
             setIsOpen(true);
           }
         } else {
-          alert('does not contain');
+          setPopUpData('File Uploaded is not a valid Lottie File');
+          setIsPopUpOpen(true);
           inputReplacer(oldInput);
+          handleClose();
         }
       })
     }
@@ -84,7 +83,8 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
 
   const uploadTag = (event) => {
     if(event.key === 'Enter') {
-      setTags(tags => [...tags, event.target.value]);
+      let tag = event.target.value;
+      setTags(tags => [...tags, tag]);
       event.target.value = "";
     }
   }
@@ -192,6 +192,11 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                       isLoginDialogOpened={isOpen}
                       handleCloseLoginDialog={() => setIsOpen(false)}
                       userData={(userD) => setUserData(userD)}
+                    />
+                    <PopUp 
+                      isPopUpOpened={isPopUpOpen} 
+                      handleClosePopUp={() => setIsPopUpOpen(!isPopUpOpen)}
+                      popUpData={popUpData}
                     />
                   </div>
                 </div>

@@ -1,5 +1,8 @@
 import React, { useRef } from "react";
 
+/*
+  Description: Lottie Player to load various lottie json animations.
+*/
 
 const LottiePlayer = ({color, lottieData}) => {
     const ref = useRef(null);
