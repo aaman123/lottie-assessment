@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 export default function Home() {
   
   const DynamicComponentWithNoSSR = dynamic(
-    () => import('./Dashboard/Dashboard'),
+    () => import('./dashboard'),
     { ssr: false }
   )
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
@@ -20,7 +20,7 @@ export default function Home() {
       </Head>
       {
       user !== null ? 
-      <DynamicComponentWithNoSSR username={user} />
+      <DynamicComponentWithNoSSR />
       : 
       <Landing />
     }

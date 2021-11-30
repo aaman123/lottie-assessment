@@ -20,6 +20,8 @@ router.post('/postLottieData', async(req, res) => {
 
         if(user.length != 0) {
             await Animation.create({ email , animationJson, tags });
+
+            res.json({ animationJson });
         } else {
             await User.create({ username, email, photoUrl });
             await Animation.create({ email , animationJson, tags });

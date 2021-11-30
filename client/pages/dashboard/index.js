@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
 import Upload from '../../components/Upload/Upload';
 import ViewLottie from "../../components/Layout/ViewLottie";
+import uuid from 'react-uuid';
+import { XCircleIcon } from '@heroicons/react/outline';
 
-const Dashboard = ({username}) => {
+const Dashboard = () => {
     
+    const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+    const router = useRouter();
+    const query = router.query;
     const [show, setShow] = useState(false);
     const [profile, setProfile] = useState(false);
     const [userData, setUserData] = useState({});
@@ -13,6 +19,7 @@ const Dashboard = ({username}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [viewLottie, setViewLottie] = useState(false);
     const [lottieData, setLottieData] = useState();
+    const [searchData, clearSearchData] = useState(false);
 
     const handleOpen = () => {
         setIsOpen(!isOpen);
@@ -26,7 +33,7 @@ const Dashboard = ({username}) => {
     useEffect(() => {
         axios({
             type: 'GET',
-            url: `http://65.1.64.218/api/getLotties/${username}`,
+            url: `http://localhost:8080/api/getLotties/${user}`,
             header: {
                 'Content-Type': 'application/json'
             }
@@ -34,14 +41,14 @@ const Dashboard = ({username}) => {
             setUserData(r.data.user[0]);
             setAnimationData(r.data.animation);
         })
-    }, [])
+    }, [query, searchData])
 
     const searchLotties = (event) => {
         if(event.key == 'Enter') {
             const searchTerm = event.target.value;
             axios({
                 type: 'GET',
-                url: `http://65.1.64.218/api/searchLottie/${username}/${searchTerm}`,
+                url: `http://localhost:8080/api/searchLottie/${user}/${searchTerm}`,
                 header: {
                     'Content-Type': 'application/json'
                 }
@@ -50,6 +57,11 @@ const Dashboard = ({username}) => {
                 event.target.value = "";
             })
         } 
+    }
+
+    const handleLogOut = () => {
+        localStorage.removeItem('user');
+        router.push('/');
     }
 
     return (
@@ -180,7 +192,7 @@ const Dashboard = ({username}) => {
                                         justify-end lg:justify-between bg-white 
                                         relative z-40">
                             <div className="hidden lg:flex w-full pr-6">
-                                <div className="w-1/2 h-full hidden lg:flex items-center pl-6 pr-24">
+                                <div className="w-1/2 h-full hidden lg:flex items-center pl-6 pr-5">
                                     <div className="relative w-full">
                                         <div className="text-gray-500 absolute ml-4 inset-0 m-auto w-4 h-4">
                                             <svg xmlns="http://www.w3.org/2000/svg" 
@@ -191,15 +203,20 @@ const Dashboard = ({username}) => {
                                                 <circle cx={10} cy={10} r={7} />
                                                 <line x1={21} y1={21} x2={15} y2={15} />
                                             </svg>
-                                        </div>
+
+                                        </div>                                       
                                         <input className="border border-gray-100 focus:outline-none 
                                                          focus:border-indigo-700 rounded w-full text-sm 
                                                          text-gray-500 bg-gray-100 pl-12 py-2" 
                                                 type="text" 
                                                 placeholder="Search Animations"
                                                 onKeyDown={searchLotties}
+                                                
                                         />
                                     </div>
+                                </div>
+                                <div onClick={() => {clearSearchData(!searchData)}} className="mt-5 mr-20">
+                                    <XCircleIcon className="h-6 w-6 text-black hover:text-green-600" />    
                                 </div>
                                 <div className="w-1/2 hidden lg:flex">
                                     <div className="w-full flex items-center pl-8 justify-end">
@@ -238,7 +255,7 @@ const Dashboard = ({username}) => {
                                                                     <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
                                                                     <path d="M7 12h14l-3 -3m0 6l3 -3" />
                                                                 </svg>
-                                                                <span className="text-sm ml-2">Sign out</span>
+                                                                <span onClick={handleLogOut} className="text-sm ml-2">Sign out</span>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -288,7 +305,7 @@ const Dashboard = ({username}) => {
                                 {
                                     animationData.map((lottie, index) => {
                                         return(    
-                                            <div key={index} className="w-80 border-2 ml-5 mt-5 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
+                                            <div key={uuid()} className="w-80 border-2 ml-5 mt-5 rounded-xl shadow-2xl" onClick={() => handleLottieOpen(lottie.animationJson)}>
                                                 <Player
                                                     autoplay
                                                     loop

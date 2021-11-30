@@ -3,14 +3,15 @@ import { Dialog, Transition } from '@headlessui/react';
 import { LoginIcon } from '@heroicons/react/outline';
 import { SketchPicker } from 'react-color';
 import LottiePlayer from '../Animations/LottiePlayer';
-import LottieEditor from '../../pages/Editor/LottieEditor';
-
+import { useLottieData } from '../../context/useLottieContext';
+import { useRouter } from 'next/router';
 
 const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData}) => {
     const cancelButtonRef = useRef(null)
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [color, setColor] = useState();
-    const [editLottie, setEditLottie] = useState(false);
+    const router = useRouter();
+    const { setLottieData } = useLottieData();
 
     const handleClose = () => {
         handleCloseLottieDialog(false);
@@ -30,7 +31,8 @@ const ViewLottie = ({isLottieDialogOpened, handleCloseLottieDialog, lottieData})
     };
 
     const handleEditLottie = () => {
-      setEditLottie(!editLottie)
+      setLottieData(lottieData);
+      router.push('/editor');
     }
 
     return (

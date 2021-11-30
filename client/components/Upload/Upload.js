@@ -4,6 +4,8 @@ import { XIcon, XCircleIcon } from '@heroicons/react/outline';
 import { inputReplacer, lottieChecker } from '../../helpers/GenericHelpers';
 import Login from '../Auth/Login';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import uuid from 'react-uuid';
 
 const Upload = ({isDialogOpened, handleCloseDialog}) => {
 
@@ -12,14 +14,15 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
   const [fileData, setFileData] = useState();
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
   const [tags, setTags] = useState([]);
-  const [areTagsUploaded, setAreTagsUploaded] = useState(false);
+  const [isLottieSubmitted, setLottieSubmitted] = useState(false);
+  const router = useRouter();
   
   const handleClose = () => {
     handleCloseDialog(false);
   };
 
   useEffect(() => {
-    if(fileData && Object.keys(userData).length !== 0 && areTagsUploaded) {
+    if(fileData && Object.keys(userData).length !== 0 && isLottieSubmitted) {
       var payLoad = {
         userData: userData,
         fileData: fileData,
@@ -27,15 +30,16 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       }
       axios({
         method: 'POST',
-        url: 'http://65.1.64.218/api/postLottieData',
+        url: 'http://localhost:8080/api/postLottieData',
         data: payLoad,
         header: {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        console.log(response);
+        handleClose();
+        router.push('/dashboard');
       })
-    } else if(fileData && areTagsUploaded) {
+    } else if(fileData && isLottieSubmitted) {
       var payLoad = {
         userData: {
           email: user
@@ -45,16 +49,17 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
       }
       axios({
         method: 'POST',
-        url: 'http://65.1.64.218/api/postLottieData',
+        url: 'http://localhost:8080/api/postLottieData',
         data: payLoad,
         header: {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        console.log(response);
+        handleClose();
+        router.push({ pathname: '/dashboard', query: 'lottieUploaded'});
       })
     }
-  }, [userData, fileData, areTagsUploaded])
+  }, [userData, fileData, isLottieSubmitted])
   
   const onFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
@@ -164,7 +169,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                                   tags.map((tag, index) => {
                                     return(
                                       <>
-                                          <p className="flex flex-row m-2 rounded-xl shadow-xl border-2 p-2">{tag}
+                                          <p key={uuid()} className="flex flex-row m-2 rounded-xl shadow-xl border-2 p-2">{tag}
                                             <span><XCircleIcon onClick={() => {removeTag(index)}} className="h-4 w-4 mt-1 ml-2" aria-hidden="true" /></span>
                                           </p>     
                                       </>
@@ -177,7 +182,7 @@ const Upload = ({isDialogOpened, handleCloseDialog}) => {
                               <div className="flex flex-row justify-center mt-10">
                                 <button className="w-64 border-2 border-black border-yellow-600 font-mono 
                                                   font-bold hover:bg-yellow-500 rounded p-2" 
-                                        onClick={() => {setAreTagsUploaded(!areTagsUploaded)}}>Submit</button>
+                                        onClick={() => {setLottieSubmitted(!isLottieSubmitted)}}>Submit</button>
                               </div>
                               
                           </div>

@@ -1,12 +1,18 @@
 import styles from './LottieEditor.module.css'
-import doggo from '../../public/animations/doggo';
 import LottiePlayer from '../../components/Animations/LottiePlayer';
+import { ArrowCircleLeftIcon }from '@heroicons/react/outline';
 import React, { useRef, useState } from "react";
+import { useRouter } from 'next/router';
 import { SketchPicker } from 'react-color';
 import rgbHex from 'rgb-hex';
+import uuid from 'react-uuid';
+import { useLottieData } from '../../context/useLottieContext';
 
 const LottieEditor = () => {
     const ref = useRef(null);
+    const { lottieData } = useLottieData();
+    const router = useRouter();
+
     React.useEffect(() => {
       import("@lottiefiles/lottie-player");
     });
@@ -16,14 +22,14 @@ const LottieEditor = () => {
     // const [color, setColor] = useState();
 
     const jsonDetails = {
-        "v": "5.7.8",
-        "fr": 30,
-        "ip": 0,
-        "op": 25,
-        "w": 900,
-        "h": 900,
-        "nm": "dog",
-        "ddd": 0,
+        "v": lottieData.v,
+        "fr": lottieData.fr,
+        "ip": lottieData.ip,
+        "op": lottieData.op,
+        "w": lottieData.w,
+        "h": lottieData.h,
+        "nm": lottieData.nm,
+        "ddd": lottieData.ddd,
         "assets": [],
         "layers": []
     }
@@ -66,11 +72,14 @@ const LottieEditor = () => {
     // };
 
 
-    console.log(layerDetails);
-    console.log(doggo.layers[4].shapes[0].it[0].ty);
+    // console.log(layerDetails);
+    // console.log(lottieData.layers[4].shapes[0].it[0].ty);
     return(
         <div className="relative bg-gray-900">
             <div className="w-full bg-gray-600 h-12 p-2 flex flex-row items-center fixed z-20">
+                <span><ArrowCircleLeftIcon onClick={() => { router.push('/dashboard') }} 
+                      className="h-6 w-6 text-white hover:text-green-600" aria-hidden="true" />
+                </span>
                 <h1 className="font-lf-bold p-1 px-3 text-base text-white">Lottie 101</h1>
             </div>
             <div>
@@ -80,11 +89,11 @@ const LottieEditor = () => {
                             <label className="block uppercase tracking-wide text-white text-xs opacity-50 font-lf-bold mb-2 px-4">Layers</label>
                             <div className="relative">
                                 {
-                                    doggo.layers.map((l, index) => {
+                                    lottieData.layers.map((l, index) => {
                                         jsonDetails['layers'].pop();
                                         jsonDetails['layers'].push(l);
                                         return(
-                                            <div key={index} onClick={() => {handleColors(doggo['layers'][index])}}>
+                                            <div key={uuid()} onClick={() => {handleColors(lottieData['layers'][index])}}>
                                                 <div className="p-2 pl-4 mt-4 cursor-pointer items-center hover:bg-green-600 flex flex-row">
                                                     <div className="w-12 h-12 rounded" style={{backgroundColor: 'rgb(255, 255, 255)'}}>
                                                         <div>
@@ -122,7 +131,7 @@ const LottieEditor = () => {
                                            controls
                                            loop
                                            mode="normal"
-                                           src={JSON.stringify(doggo)}
+                                           src={JSON.stringify(lottieData)}
                                            style={{ overflow: 'hidden' ,margin: '0px auto' }}>
                                         </lottie-player>
                                     </div>
