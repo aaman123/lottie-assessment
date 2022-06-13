@@ -3,8 +3,8 @@
 */
 
 const inputReplacer = (oldInput) => {
-    var oldInput = document.getElementById("uploadFile");
-    var newInput = document.createElement("input");
+    const oldInput = document.getElementById("uploadFile");
+    const newInput = document.createElement("input");
     newInput.type = "file";
     newInput.id = oldInput.id;
     newInput.className = oldInput.className;
@@ -16,12 +16,13 @@ const inputReplacer = (oldInput) => {
 
 const lottieChecker = (jsonFile) => {
     return new Promise((resolve, reject) => {
-        const file = "";
+        let file = "";
         const fileReader = new FileReader();
         const propertyArray = ['v', 'fr', 'ip', 'op', 'layers', 'w', 'h'];
-        const hasProperty = true;
+        let hasProperty = true;
 
         fileReader.readAsText(jsonFile, "UTF-8");
+        
         fileReader.onload = e => {
             file = JSON.parse(e.target.result);
             propertyArray.forEach((prop) => {
